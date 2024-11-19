@@ -1,15 +1,29 @@
-This project is devloped 
+This project was developed and submitted to the International Track of the Presidential Hackathon 2024, hosted by the Ministry of Digital Affairs in Taiwan.
 
-We aim to achieve three main aims by integrating essential functions to support sustainable and smart farming through a seamless, user-friendly interface using Django Framework:
+A team comprising Dr. Huw Whitworth (from Cranfield University) and several PhD students from the Open University collaborated to co-create solutions for smart agriculture, aligning with this year’s theme, "Digital and Green."
+
+An integrated approach to managing data across these diverse groups bridges the information gap, supporting both traditional and innovative farmers as they adapt to evolving agricultural landscapes. To this end, we have developed a holistic system that aligns with six of the 17 United Nations Sustainable Development Goals (SDGs), namely SDG2(Zero Hunger), SDG3(Good Health and Well-Being), SDG7 (Affordable and Clean Energy), SDG10(Reduced Inequalities), SDG13(Climate Action) and SDG15(Life on Land).
+
+We aim to achieve three key objectives by integrating essential functions that support sustainable and smart farming through a seamless, user-friendly interface. Built using the Django Framework, the system provides six distinct functionalities within this web application:
+
+### Main Aims
 - To develop a comprehensive agricultural dashboard leveraging Agricultural IoT data, machine learning, and language models to enhance decision-making in sustainable agriculture.
 - To promote sustainable agricultural practices and consumption patterns by providing actionable insights into crop suitability, yield prediction, and carbon footprint awareness.
 - To empower local farmers and communities by fostering collaboration through a marketplace app that encourages the use of local, seasonal produce and promotes environmental sustainability. 
 
+### Six Functionalities
+1. Crop Recommondation
+2. Partner Cropping for Fertilizer Reduction
+3. Yield Prediction
+4. Community Market
+5. Plowpal for Agriculture (Intelligent Chatbot)
+6. Carbon Footprint Library
 
 Users can refer to the Powerpoint slides for detailed introduction and demonstration.
 
-#### The breakdown functionalities matching the evalutation criteria are listed below:
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------
+#### The breakdown functionalities matching the evalutation criteria are listed below:
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
