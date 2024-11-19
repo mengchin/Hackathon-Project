@@ -1,7 +1,15 @@
-This Project
+This project is devloped 
+
+We aim to achieve three main aims by integrating essential functions to support sustainable and smart farming through a seamless, user-friendly interface using Django Framework:
+- To develop a comprehensive agricultural dashboard leveraging Agricultural IoT data, machine learning, and language models to enhance decision-making in sustainable agriculture.
+- To promote sustainable agricultural practices and consumption patterns by providing actionable insights into crop suitability, yield prediction, and carbon footprint awareness.
+- To empower local farmers and communities by fostering collaboration through a marketplace app that encourages the use of local, seasonal produce and promotes environmental sustainability. 
 
 
+Users can refer to the Powerpoint slides for detailed introduction and demonstration.
 
+The breakdown functionalities matching the evalutation criteria are listed below:
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
