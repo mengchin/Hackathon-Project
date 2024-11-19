@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../static/css/yield.css">
+    <!----Bootstrap ----->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
+    <!--Fontawesome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!--ChartJS-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="sidenav">
+        <div style="background-color: #ffeb9a; width: 100%;"><a href="http://127.0.0.1:8000/"><i class="bi bi-house-fill"></i></a></div>
+        <div style="padding-top: 10px;">
+            <!----Chatbot-------->
+            <a href="http://127.0.0.1:8000/chatbot"><i class="bi bi-chat-right-quote"></i></a>
+            <!----Crop Recommendation------>
+            <a href="http://127.0.0.1:8000/crop_recommend"><i class="bi bi-clipboard-data-fill"></i></a>
+            <!-----Yield Prediction------>
+            <a href="http://127.0.0.1:8000/yield_predict"><i class="bi bi-bar-chart-fill"></i></a>
+            <!------Recipes and Store Mapper-------------->
+            <a href="http://127.0.0.1:8000/recipe_store"><i class="bi bi-shop"></i></a>
+            <!-------Carbon Footprint-------------->
+            <a href="http://127.0.0.1:8000/cf_library"><i class="fa-solid fa-shoe-prints"></i></a> 
+        </div>
+    </div>
+    <div class="central-panel">
+        <div class="central-panel-title">
+            YIELD PREDICTION
+            <br><span style="font-size: 20px;color: #ffe57a;">YOUR INTELLIGENT ADVICE FOR YIELD PREDICTION</span>
+        </div>
+        <div class="central-panel-form" style="margin: 10px;">
+            <div id="form">
+                <form class="query-form" action="/yield_predict/predict" method="POST">
+                   {%csrf_token%}
+                <div class="form-selections">
+                   <div class="form-group">
+                    <label style="color: white;" for="locations">Choose a Location</label>
+                    <select name="locationDropdown" id="locationDropdown" style="width: 960px; height: 35px; border-radius: 2px;">
+                    </select>
+                   </div>
+                    <div class="form-group">
+                        <label style="color: white;" for="crops">Specify a Crop</label>
+                        <select name="cropDropdown" id="cropDropdown" style="width: 960px; height: 35px; border-radius: 2px;">
+                        </select>
+                   </div>     
+                   <div class="form-group">
+                    <label style="color: white;" for="seasons">Specify a season</label>
+                    <select name="seasonDropdown" id="seasonDropdown" style="width: 960px; height: 35px; border-radius: 2px;">
+                    </select>
+                   </div>  
+
+                   <div class="form-group">
+                    <input type="number" id="Area" name="Area" placeholder="Enter Area Size (ha)" class="form-control" required step="0">
+                    <span class="error"></span>
+                   </div>
+
+
+                   <div class="form-group">
+                      <input type="number" id="Annual_Rainfall" name="Annual_Rainfall" placeholder="Enter Annual Rainfall (mm)" class="form-control" required step="00">
+                      <span class="error"></span>
+                   </div>
+
+                   <!--div class="form-group">
+                        <input type="number" step="0.01" id="Average_Rainfall" name="Average_Rainfall" placeholder="Enter Average Rainfall (mm)" class="form-control" required step="0">
+                        <span class="error"></span>
+                    </div-->
+
+                   <div class="form-group">
+                           <input type="number" step="0.01" id="Fertilizer" name="Fertilizer" placeholder="Enter value for Fertilizer Quantity" class="form-control" required step="0">
+                   </div>      
+                   <div class="form-group">
+                    <input type="number" step="0.01" id="Pesticide" name="Pesticide" placeholder="Enter value for Pesticide Quantity" class="form-control" required step="0">
+                    </div>                  
+                </div>
+                <button class="submit-button" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="number-container" >    
+            <span style="font-weight: 600; color: white; font-size: 30px;"> Input Value</span> 
+            <ul style="font-size: 20px;">                          
+                <li>Crop Specified: {{Crops}} </li>
+                <li>Land Area Size: {{Area}} (ha)</li> 
+                <li>Season: {{Season}} (mm)</li>                          
+                <li>Annual Rainfall: {{Annual_Rainfall}} (mm)</li>                           
+                <li>Fertilizer: {{Fertilizer}} (kg)</li>                           
+                <li>Pesticide: {{Pesticide}} (kg)</li>
+            </ul>
+        </div>
+        <div class="result-container">
+            <div class="col">
+                <span style="color: white;">Based on your input information, we estimate the production is:</span>
+                <br>
+                <br>
+                <div class="container">
+                    <div class="result-crop">
+                        <i class="fa-solid fa-seedling"></i>  {{Result}} metric tons.
+                     </div>
+                </div>
+            </div>
+        </div>
+    
+            
+    </div>
+
+</body>
+<script src="../static/js/yield.js"></script>
+<script>
+
+    const get_data = [{{ Nitrogen }}, {{Phosporus}}, {{ Potassium }}]
+    var chartChemicals = document.getElementById('chartChemicals');
+
+    const chemical_data = {
+    labels: ['Nitrogen','Phosporus', 'Potassium'],
+    datasets: [{
+      data: get_data,
+      backgroundColor: [
+        '#7dc4a1',
+        '#4faca1',
+        '#0487a2'
+      ],
+      hoverOffset: 4
+    }]
+   };
+    var  chartChemicals=  new Chart(chartChemicals,{
+        type: 'doughnut',
+        data: chemical_data,
+        options: {
+          plugins: {
+              title: {
+                display: false,
+                align:'center',
+                color:'white',
+                font: {
+                    size: '20'
+                },
+              },
+              legend: {
+                  display: true,
+                  position: 'right',
+                  align: 'center',
+                  labels: {
+                      color:'white',
+                      font: {
+                          size: '15'
+                      },
+                  }
+              }
+           }
+         }
+      });
+      
+
+
+</script>
+
+</html>

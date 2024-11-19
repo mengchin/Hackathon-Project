@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../static/css/chatbot.css">
+    <!----Bootstrap ----->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
+    <!--Fontawesome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  </head>
+  <body>
+    <div class="sidenav">
+      <div style="background-color: #ffeb9a; width: 100%;"><a href="http://127.0.0.1:8000/"><i class="bi bi-house-fill"></i></a></div>
+      <div style="padding-top: 10px;">
+          <!----Chatbot-------->
+          <a href="http://127.0.0.1:8000/chatbot"><i class="bi bi-chat-right-quote"></i></a>
+          <!----Crop Recommendation------>
+          <a href="http://127.0.0.1:8000/crop_recommend"><i class="bi bi-clipboard-data-fill"></i></a>
+          <!-----Yield Prediction------>
+          <a href="http://127.0.0.1:8000/yield_predict"><i class="bi bi-bar-chart-fill"></i></a>
+          <!------Recipes and Store Mapper-------------->
+          <a href="http://127.0.0.1:8000/recipe_store"><i class="bi bi-shop"></i></a>
+          <!-------Carbon Footprint-------------->
+          <a href="http://127.0.0.1:8000/cf_library"><i class="fa-solid fa-shoe-prints"></i></a> 
+      </div>
+    </div>
+    <div class="chat-container">
+      <div class="flex-grow-1">
+        <div class="chat-header" > <i class="fa fa-commenting" aria-hidden="true"></i> CHAT</div>
+        <div class="card-body messages-box">
+          
+          <ul class="list-unstyled messages-list">
+            <li class="message received">
+              <div class="message-text">
+                <div class="message-sender">
+                  <b>AI Chatbot</b>
+                </div>
+                </div>
+                <div class="message-content">
+                  Hi, I am your AI Chatbot, you can ask me anything.(or type 'exit' to quit)
+                </div>
+              </div>
+            </li>
+          </ul>
+          
+        </div>
+        <br><br>
+        <br><br>
+        <br><br>
+      </div>
+      <form class="message-form">
+        {%csrf_token%}
+        <div style="float: left;">
+          <input type="text" class="message-input" placeholder="Type your message...">
+          <btn type="submit" class="btn btn-primary btn-send"><i class="fa-solid fa-arrow-right"></i></btn>
+        </div>
+      </form>
+    </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="../static/js/chatbot.js"></script>
+  </body>
+</html>

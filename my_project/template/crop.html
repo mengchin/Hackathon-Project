@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../static/css/crop.css">
+    <!----Bootstrap ----->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
+    <!--ChartJS-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="sidenav">
+        <div style="background-color: #ffeb9a; width: 100%;"><a href="http://127.0.0.1:8000/"><i class="bi bi-house-fill"></i></a></div>
+        <div style="padding-top: 10px;">
+            <!----Chatbot-------->
+            <a href="http://127.0.0.1:8000/chatbot"><i class="bi bi-chat-right-quote"></i></a>
+            <!----Crop Recommendation------>
+            <a href="http://127.0.0.1:8000/crop_recommend"><i class="bi bi-clipboard-data-fill"></i></a>
+            <!-----Yield Prediction------>
+            <a href="http://127.0.0.1:8000/yield_predict"><i class="bi bi-bar-chart-fill"></i></a>
+            <!------Recipes and Store Mapper-------------->
+            <a href="http://127.0.0.1:8000/recipe_store"><i class="bi bi-shop"></i></a>
+            <!-------Carbon Footprint-------------->
+            <a href="http://127.0.0.1:8000/cf_library"><i class="fa-solid fa-shoe-prints"></i></a> 
+        </div>
+    </div>
+    <div class="central-panel">
+        <div class="central-panel-title">
+            CROP RECOMMENDATION
+            <br><span style="font-size: 20px;color: #ffe57a;">YOUR INTELLIGENT ADVICE FOR CROP RECOMMENDATION</span>
+        </div>
+        <div class="central-panel-form" style="margin: 10px;">
+            <div id="form">
+                <form class="query-form" action="/crop_recommend/predict" method="POST">
+                   {%csrf_token%}
+                   <span style="color: white;">PLEASE ENTER DATA FOR RECOMMENDATION</span>
+                <div class="form-selections">
+                   <div class="form-group">
+                      <!--label for="Nitrogen">Nitrogen</label-->
+                      <input type="number" id="Nitrogen" name="Nitrogen" placeholder="Enter Nitrogen" class="form-control" required step="0">
+                      <span class="error"></span>
+                   </div>
+   
+                   <div class="form-group">
+                      <!--label for="Phosporus">Phosphorus</label-->
+                      <input type="number" id="Phosporus" name="Phosporus" placeholder="Enter Phosphorus" class="form-control" required step="00">
+                      <span class="error"></span>
+                   </div>
+   
+                   <div class="form-group">
+                      <!--label for="Potassium">Potassium</label-->
+                      <input type="number" id="Potassium" name="Potassium" placeholder="Enter Potassium" class="form-control" required step="00">
+                      <span class="error"></span>
+                   </div>
+   
+                   <div class="form-group">
+                      <!--label for="Temperature">Temperature</label-->
+                           <input type="number" step="0.01" id="Temperature" name="Temperature" placeholder="Enter Temperature in °C" class="form-control" required step="0">
+                   </div>
+   
+                   <div class="form-group">
+                      <!--label for="Humidity">Humidity</label-->
+                      <input type="number" step="0.01" id="Humidity" name="Humidity" placeholder="Enter Humidity in %" class="form-control" required step="0">
+                      <span class="error"></span>
+                   </div>
+   
+                   <div class="form-group">
+                      <!--label for="pH">pH</label-->
+                      <input type="number" step="0.01" id="Ph" name="Ph" placeholder="Enter pH value" class="form-control" required step="0">
+                      <span class="error"></span>
+                   </div>
+   
+                   <div class="form-group">
+                      <!--label for="Rainfall">Rainfall</label-->
+                           <input type="number" step="0.01" id="Rainfall" name="Rainfall" placeholder="Enter Rainfall in mm" class="form-control" required>
+                      <span class="error"></span>
+                   </div>
+                   
+                </div>
+                <button class="submit-button" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="number-container">     
+            <div class="row result">
+                <div class="col" style="padding: 10px 10px 10px 10px;">    
+                    <span style="padding-left: 10px; font-weight: 700; color: white;">INFORMATION</span>                
+                    <ul>
+                       <li>Temperature(°C): {{ Temperature }} </li>
+                       <li>Humidity(%): {{ Humidity }}</li>
+                       <li>pH Value: {{ PHValue }}</li>
+                       <li>Rainfall(mm):  {{Rainfall}} </li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <canvas id="chartChemicals"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="result-container">
+            <div class="col">
+                <span style="color: white;">Based on your input information, we suggest you the best crop to be cultivated here is:</span>
+                <br>
+                <br>
+                <div class="container">
+                    <div class="result-crop">
+                        <i class="fa-solid fa-seedling"></i>  
+                        <div id="crop_suggested">{{Result}}</div>
+                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="comp-container">
+            <div class="col">
+                <span style="color: white;">Here are the companion plants that can benfit the growing crop:</span>
+                <br><br>
+                <!--table id="companionTable">
+                    <thead>
+                      <tr>
+                        <th>Crop Name</th>
+                        <th>Companion Crop</th>
+                        <th>Benefits</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>apple</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>banana</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>blackgram</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>chickpea</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>coconut</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>coffee</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>cotton</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>grapes</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>jute</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>kidneybeans</td>
+                        <td>corn (maize), squash, spinach, radish, beets, cucumber, potatoes</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>lentil</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>maize</td>
+                        <td>beans, cucurbits, soybeans, tomatoes</td>
+                        <td>Provides beans with a trellis, is protected from predators and dryness by cucurbits, in the three sisters technique</td>
+                      </tr>
+                      <tr>
+                        <td>mango</td>
+                        <td>Basil</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>mothbean</td>
+                        <td>corn (maize), squash, spinach, radish, beets, cucumber, potato</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>mungbean</td>
+                        <td>corn (maize), squash, spinach, radish, beets, cucumber, potato</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>muskmelon</td>
+                        <td>corn (maize), squash, spinach, radish, beets, cucumber, potato</td>
+                        <td>Repels pests</td>
+                      </tr>
+                      <tr>
+                        <td>orange</td>
+                        <td>alliums (chives, garlic, and onions), wildflowers, lavender, sunflower</td>
+                        <td>Repels certain pests such as aphids, mites, maggots, as well as rabbits and deer.</td>
+                      </tr>
+                      <tr>
+                        <td>papaya</td>
+                        <td>marigolds, basil, and chives</td>
+                        <td>Repels and control pests. Avoid potatoes and fennel as they compete with Papayas for resources.</td>
+                      </tr>
+                      <tr>
+                        <td>pigeonpea</td>
+                        <td>cauliflower,garlic, turnip, radish,potato, cucumber, beans, corn (maize)</td>
+                        <td>Provides shade</td>
+                      </tr>
+                      <tr>
+                        <td>pomegranate</td>
+                        <td>Beans</td>
+                        <td>Improves soil nitrogen</td>
+                      </tr>
+                      <tr>
+                        <td>rice</td>
+                        <td>Beans</td>
+                        <td>Improves soil nitrogen</td>
+                      </tr>
+                      <tr>
+                        <td>watermelon</td>
+                        <td>cabbage, broccoli, cauliflower, carrots, kale, okra, spinach, sunflowers, lettuce, and russels sprouts</td>
+                        <td>Improves soil nitrogen </td>
+                      </tr>
+                    </tbody>
+                </table--->
+                <table id="companionTable">
+                    <thead>
+                      <tr style="text-align: right;">
+                        <th>Common Name</th>
+                        <th>Helps</th>
+                        <th>Helped By</th>
+                        <th>Attracts</th>
+                        <th>Repels/Distracts</th>
+                        <th>Avoid</th>
+                        <th>Comments</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Alliums</td>
+                        <td>Fruit trees, nightshades (tomatoes, peppers, potatoes), brassicas, carrots</td>
+                        <td>Carrots, tomatoes, marigolds, mints</td>
+                        <td>Thrips</td>
+                        <td>Slugs, aphids, carrot fly, cabbage loopers, cabbage maggots, cabbage worms, Japanese beetles</td>
+                        <td>Beans, peas</td>
+                        <td>Family includes onions and garlic.</td>
+                      </tr>
+                      <tr>
+                        <td>Asparagus</td>
+                        <td>Tomatoes, parsley</td>
+                        <td>Aster family flowers, dill, coriander, tomatoes, parsley, basil, comfrey, marigolds, nasturtiums</td>
+                        <td>None</td>
+                        <td>Onion, garlic, potatoes</td>
+                        <td>NaN</td>
+                        <td>NaN</td>
+                      </tr>
+                      <tr>
+                        <td>Bush Beans</td>
+                        <td>Cucumber, strawberries</td>
+                        <td>Celery, strawberries, grains</td>
+                        <td>None</td>
+                        <td>Soybeans, dry beans, alfalfa</td>
+                        <td>Crucifers, cucurbits, legumes, lettuce</td>
+                        <td>Avoid before and after other legumes or cucurbits as it increases sclerotinia in the soil.</td>
+                      </tr>
+                      <tr>
+                        <td>Pole Beans</td>
+                        <td>corn (maize)</td>
+                        <td>Radishes, corn (maize)</td>
+                        <td>None</td>
+                        <td>Brassicas, kohlrabi</td>
+                        <td>NaN</td>
+                        <td>corn (maize) provides a pole for beans to climb, beans give nitrogen to the soil. "Three Sisters" with corn (maize) and squash.</td>
+                      </tr>
+                      <tr>
+                        <td>Fava Beans</td>
+                        <td>None</td>
+                        <td>Strawberries, celery</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>See legumes for more info.</td>
+                      </tr>
+                      <tr>
+                        <td>Beets</td>
+                        <td>Bush beans, cabbage, lettuce, kohlrabi, onions, brassicas, passion fruit</td>
+                        <td>Onions, kohlrabi, catnip, garlic, mint</td>
+                        <td>None</td>
+                        <td>Runner or pole beans</td>
+                        <td>NaN</td>
+                        <td>Leaves enrich soil with magnesium, runner or pole beans stunt each other��s growth.</td>
+                      </tr>
+                      <tr>
+                        <td>Brassicas</td>
+                        <td>Onions, beans, spinach, chard, dill, sage</td>
+                        <td>Aromatic plants, chamomile, marigolds, garlic, onions, peas, rosemary, borage</td>
+                        <td>Wireworms</td>
+                        <td>Mustards, nightshades (tomatoes, peppers, etc.), pole beans, strawberries</td>
+                        <td>NaN</td>
+                        <td>Family includes broccoli, Brussels sprouts, cabbage, cauliflower, and turnips.</td>
+                      </tr>
+                      <tr>
+                        <td>Broccoli</td>
+                        <td>Lettuce</td>
+                        <td>Beets, dill, onions, tomato, turnip, clover</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>More profitable when intercropped with lettuce, turnips act as a trap crop.</td>
+                      </tr>
+                      <tr>
+                        <td>Brussels Sprouts</td>
+                        <td>None</td>
+                        <td>Sage, thyme, clover</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>NaN</td>
+                      </tr>
+                      <tr>
+                        <td>Cabbage</td>
+                        <td>Beans, celery</td>
+                        <td>Beans, clover, calendula, chamomile, dill, coriander, hyssop, onions, mint, rosemary, thyme</td>
+                        <td>Snails, slugs</td>
+                        <td>Grapes</td>
+                        <td>NaN</td>
+                        <td>Nasturtiums repel cabbage moths.</td>
+                      </tr>
+                      <tr>
+                        <td>Carrots</td>
+                        <td>Tomatoes, alliums, beans, leeks, lettuce, onions</td>
+                        <td>Lettuce, alliums (chives, leeks, onions), rosemary, sage, flax</td>
+                        <td>Predatory insects</td>
+                        <td>Leek moth, onion fly</td>
+                        <td>Dill, parsnip, radish</td>
+                        <td>Tomatoes grow well with carrots but can stunt carrot growth. Beans provide nitrogen.</td>
+                      </tr>
+                      <tr>
+                        <td>Cauliflower</td>
+                        <td>Beans, celery, spinach, peas</td>
+                        <td>Mixture of cabbage, marigolds, rape, sunflower</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>See brassicas for more info.</td>
+                      </tr>
+                      <tr>
+                        <td>Celery</td>
+                        <td>Bush beans, brassicas, cucumber</td>
+                        <td>Cosmos, daisies, snapdragons, leeks, tomatoes, cauliflower, cabbage, bush beans</td>
+                        <td>Whiteflies</td>
+                        <td>corn (maize), aster flowers</td>
+                        <td>NaN</td>
+                        <td>Aster flowers can transmit the aster yellows disease.</td>
+                      </tr>
+                      <tr>
+                        <td>Chard</td>
+                        <td>Brassicas, passion fruit</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>NaN</td>
+                      </tr>
+                      <tr>
+                        <td>corn (maize)</td>
+                        <td>Beans, cucurbits, soybeans, tomatoes</td>
+                        <td>Sunflowers, dill, legumes (beans, peas, soybeans), peanuts, clover, amaranth, geranium, parsley, potato</td>
+                        <td>None</td>
+                        <td>Tomato, celery</td>
+                        <td>NaN</td>
+                        <td>corn (maize) provides beans with a trellis, protected from dryness by cucurbits in "Three Sisters" technique.</td>
+                      </tr>
+                      <tr>
+                        <td>Cucumber</td>
+                        <td>Beans, kohlrabi, lettuce</td>
+                        <td>Kohlrabi, nasturtiums, radishes, marigolds, sunflowers, peas, beans, chamomile, beets, carrots, dill, onions, garlic, amaranth, celery, Malabar spinach</td>
+                        <td>Beneficial for ground beetles</td>
+                        <td>Raccoons, ants</td>
+                        <td>Potatoes, aromatic herbs</td>
+                        <td>Radish seeds repel cucumber beetles.</td>
+                      </tr>
+                      <tr>
+                        <td>Cucurbits</td>
+                        <td>corn (maize)</td>
+                        <td>corn (maize), grain sorghum</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>Family includes melons, cucumbers, gourds, pumpkins, and squash.</td>
+                      </tr>
+                      <tr>
+                        <td>Eggplant</td>
+                        <td>Beans, peppers, tomatoes, passion fruit</td>
+                        <td>Marigolds, catnip, redroot pigweed, green beans, tarragon, mints, thyme</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>Marigolds deter nematodes.</td>
+                      </tr>
+                      <tr>
+                        <td>Leek</td>
+                        <td>Carrots, celery, onions, tomatoes, passion fruit</td>
+                        <td>Carrots, clover</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>Swiss chard</td>
+                        <td>See alliums for more info.</td>
+                      </tr>
+                      <tr>
+                        <td>Lettuce</td>
+                        <td>Beets, beans, okra, onions, radish, carrots</td>
+                        <td>Radish, beets, dill, kohlrabi, onions, beans, carrots, cucumbers, strawberries, thyme, cilantro</td>
+                        <td>Slugs, snails</td>
+                        <td>None</td>
+                        <td>Celery, cabbage, cress, parsley</td>
+                        <td>Broccoli intercropped with lettuce increases profitability.</td>
+                      </tr>
+                      <tr>
+                        <td>Mustard</td>
+                        <td>Beans, cabbage, cauliflower, fruit trees, grapes, radish, Brussels sprouts, turnips</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>Various pests</td>
+                        <td>NaN</td>
+                        <td>See brassicas for more info.</td>
+                      </tr>
+                      <tr>
+                        <td>Peas</td>
+                        <td>Turnip, cauliflower, garlic</td>
+                        <td>Turnip, cauliflower, garlic</td>
+                        <td>None</td>
+                        <td>Colorado potato beetle</td>
+                        <td>NaN</td>
+                        <td>Peas intercropped with turnips, cauliflower, or garlic increase land profit.</td>
+                      </tr>
+                      <tr>
+                        <td>Peppers</td>
+                        <td>Okra</td>
+                        <td>Beans, tomatoes, okra, geraniums, petunias, sunflowers, onions, basil, mustard</td>
+                        <td>None</td>
+                        <td>Beans, kale</td>
+                        <td>Planting chili peppers near tomatoes increases tomato whitefly.</td>
+                        <td>NaN</td>
+                      </tr>
+                      <tr>
+                        <td>Potatoes</td>
+                        <td>Brassicas, beans, corn (maize), peas, passion fruit</td>
+                        <td>Horseradish, beans, dead nettle, marigolds, peas, onion, garlic, thyme, clover</td>
+                        <td>None</td>
+                        <td>Carrot, cucumber, pumpkin, raspberries, squash, sunflower, tomato</td>
+                        <td>NaN</td>
+                        <td>Horseradish increases disease resistance, garlic effective against late blight.</td>
+                      </tr>
+                      <tr>
+                        <td>Pumpkin</td>
+                        <td>corn (maize) (in Three Sisters technique) beans</td>
+                        <td>Buckwheat, Jimson weed, catnip, oregano, tansy, radishes, nasturtiums</td>
+                        <td>Spiders, ground beetles</td>
+                        <td>Potatoes</td>
+                        <td>NaN</td>
+                        <td>Radishes act as trap crops for flea beetles.</td>
+                      </tr>
+                      <tr>
+                        <td>Radish</td>
+                        <td>Squash, eggplant, cucumber, lettuce, peas, beans</td>
+                        <td>Chervil, lettuce, nasturtiums</td>
+                        <td>Flea beetles, cucumber beetles</td>
+                        <td>Grapes</td>
+                        <td>NaN</td>
+                        <td>Radishes as trap crops for flea beetles.</td>
+                      </tr>
+                      <tr>
+                        <td>Soybean</td>
+                        <td>corn (maize), sunflower</td>
+                        <td>corn (maize), sunflower</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>corn (maize) and sunflower rid soybeans of aphids.</td>
+                      </tr>
+                      <tr>
+                        <td>Squash</td>
+                        <td>corn (maize), beans, okra</td>
+                        <td>Beans, buckwheat, borage, catnip, tansy, radishes, marigolds, nasturtiums</td>
+                        <td>Spiders, ground beetles</td>
+                        <td>None</td>
+                        <td>Radishes can act as trap crops. Marigolds/nasturtiums repel squash bugs.</td>
+                        <td>NaN</td>
+                      </tr>
+                      <tr>
+                        <td>Sweet Potato</td>
+                        <td>Okra</td>
+                        <td>Okra</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>NaN</td>
+                        <td>Sweet potato and okra are mutually beneficial.</td>
+                      </tr>
+                      <tr>
+                        <td>Tomatoes</td>
+                        <td>Celery, roses, peppers, asparagus</td>
+                        <td>Asparagus, basil, beans, oregano, parsley, marigold, alliums, garlic, leeks, geraniums, nasturtium, borage, coriander, chives, dill, mustard, fennel, barley, carrots, eggplant, marigold, mints, okra, sage, thyme</td>
+                        <td>Asparagus beetle</td>
+                        <td>Black walnut, alfalfa, corn (maize), fennel, chili peppers, peas, dill, potatoes, beetroot, brassicas, rosemary</td>
+                        <td>Basil increases tomato yield.</td>
+                        <td>NaN</td>
+                      </tr>
+                      <tr>
+                        <td>Turnips</td>
+                        <td>Peas, broccoli</td>
+                        <td>Hairy vetch, peas</td>
+                        <td>None</td>
+                        <td>Hedge mustard, knotweed</td>
+                        <td>NaN</td>
+                        <td>Turnips act as trap crops for broccoli.</td>
+                      </tr>
+                      <tr>
+                        <td>Rutabagas</td>
+                        <td>Peas, broccoli</td>
+                        <td>Hairy vetch, peas</td>
+                        <td>None</td>
+                        <td>Hedge mustard, knotweed</td>
+                        <td>NaN</td>
+                        <td>Turnips act as trap crops for broccoli.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+            </div>
+        </div>             
+    </div>
+
+</body>
+<script src="../static/js/crop.js"  defer data-result="{{ Result }}"></script>
+<script>
+    const get_data = [{{ Nitrogen }}, {{Phosporus}}, {{ Potassium }}]
+    var chartChemicals = document.getElementById('chartChemicals');
+
+    const chemical_data = {
+    labels: ['Nitrogen','Phosporus', 'Potassium'],
+    datasets: [{
+      data: get_data,
+      backgroundColor: [
+        '#7dc4a1',
+        '#4faca1',
+        '#0487a2'
+      ],
+      hoverOffset: 4
+    }]
+   };
+    var  chartChemicals=  new Chart(chartChemicals,{
+        type: 'doughnut',
+        data: chemical_data,
+        options: {
+          plugins: {
+              title: {
+                display: false,
+                align:'center',
+                color:'white',
+                font: {
+                    size: '20'
+                },
+              },
+              legend: {
+                  display: true,
+                  position: 'right',
+                  align: 'center',
+                  labels: {
+                      color:'white',
+                      font: {
+                          size: '15'
+                      },
+                  }
+              }
+           }
+         }
+      });
+      
+
+
+</script>
+
+</html>

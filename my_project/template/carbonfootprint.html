@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../static/css/carbonfootprint.css">
+    <!----Bootstrap ----->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
+    <!--Fontawesome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+  <body>
+    <div class="sidenav">
+        <div style="background-color: #ffeb9a; width: 100%;"><a href="http://127.0.0.1:8000/"><i class="bi bi-house-fill"></i></a></div>
+        <div style="padding-top: 10px;">
+            <!----Chatbot-------->
+            <a href="http://127.0.0.1:8000/chatbot"><i class="bi bi-chat-right-quote"></i></a>
+            <!----Crop Recommendation------>
+            <a href="http://127.0.0.1:8000/crop_recommend"><i class="bi bi-clipboard-data-fill"></i></a>
+            <!-----Yield Prediction------>
+            <a href="http://127.0.0.1:8000/yield_predict"><i class="bi bi-bar-chart-fill"></i></a>
+            <!------Recipes and Store Mapper-------------->
+            <a href="http://127.0.0.1:8000/recipe_store"><i class="bi bi-shop"></i></a>
+            <!-------Carbon Footprint-------------->
+            <a href="http://127.0.0.1:8000/cf_library"><i class="fa-solid fa-shoe-prints"></i></a> 
+        </div>
+    </div>
+    <div class="left-panel">
+        <div class="left-panel-title">
+          Carbon Footprint Library
+            <br><span style="font-size: 16px;color: #ffe57a;">KNOW MORE ABOUT WHAT YOU EAT </span>
+        </div>
+        <div class="left-panel-form" style="margin: 10px;">
+            <div id="form">
+                <form class="query-form" action="." method="GET">
+                   {%csrf_token%}
+                <div class="form-selections">
+                    <p>Select the crops/food to lookup the carbon footprint data. Specify the origin/applicable region if you'd likw to, or search for all regions. </p>              
+                   <div class="form-group">
+                        <label style="color: white;" for="recipe">Select a Crop/Food</label>
+                        <select name="cropDropdown" id="crop" style="width: 50%; height: 35px; border-radius: 2px;">
+                        </select>
+                   </div>  
+                   
+                   <div class="form-group">
+                    <label style="color: white;" for="recipe">Specify a region</label>
+                    <select name="regionDropdown" id="region" style="width: 50%; height: 35px; border-radius: 2px;">
+                    </select>
+                   </div>              
+                </div>
+                <button id='findcrop' class="submit-button "> Look up crops</button>
+                </form>
+            </div>
+
+            <!--div id="form">
+                <div class="form-selections">   
+                   <div class="form-group">
+                    <p>Look up the annual GHG food emission in different countries. </p>              
+                    <label style="color: white;" for="recipe">Select a country</label>
+                    <select name="regionDropdown" id="region" style="width: 50%; height: 35px; border-radius: 2px;">
+                    </select>
+                   </div>              
+                </div>
+                <button id='findcountry' class="submit-button "> Look up countries</button>
+                </form>
+            </div--->
+        </div>            
+    </div>
+
+    <div class="result-panel">
+        <h1 style="color: white; font-size: 60px;">Result</h1>
+        <div style="color: white; font-size: 30px;" class="row">
+            <ul>
+                {% for carbonfootprint in queryset %}
+                  <li>
+                    <ul>
+                        <li style="font-weight: 400; font-size: 30px;">{{ carbonfootprint.cropname }}</li>
+                        <li style="color: #ffe57a; font-weight: 400;font-size: 20px;">Original Region Estimated: {{ carbonfootprint.origin_region }}</li>
+                        <li style="color: #ffe57a;font-weight: 400;font-size: 20px;">CO2 emission Factor (KG): {{ carbonfootprint.factor_kg_co2e }}</li>
+                        <li style="font-size: 20px;">Name in the Source Database: {{ carbonfootprint.sourcedb_name }} </span>
+                        <li style="font-size: 20px;">Life Cycle Stage: {{ carbonfootprint.lifecycle_stage }} </li>
+                        <li style="font-size: 20px;">Applicable Region:  {{ carbonfootprint.applicable_region }}</li>
+                        <li style="font-size: 20px;">Production System:  {{ carbonfootprint.production_system }}</li>
+                    </ul>
+                  </li>
+                  <hr />
+                {% endfor %}
+              </ul>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    var selectregion = document.getElementById("region");
+    var regionoptions = ['','Africa', 'Argentina','Asia','Australia','Australia and NewZealand', 'Brazil','British Isles', 'China',
+    'East Asia and Southeast Asia','Eastern Europe','EU','Europe','France','global', 'India',
+    'Ireland', 'Ivory Coast', 'Latin America and the Caribbean','Malaysia','Multi-region','Morocco','Near East and North Africa', 'North America', 'Oceania','Reunion Island', 'Russian Federation', 
+    'South Asia', 'South America', 'Sub-Saharan Africa','Taiwan','Thailand','UK import market mix', 'UK','Wales', 'west Indies', 'Western Europe', 'World average' ];
+
+    for(var i = 0; i < regionoptions.length; i++) {
+        var opt = regionoptions[i];
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        selectregion.appendChild(el);
+    }
+
+    var selectcrop = document.getElementById("crop");
+    var foodoptions = ['','Milk (Perishable)','Cranberries','Aubergines','Beef - Unprepared/Unprocessed','Cauliflower','Pork - Unprepared/Unprocessed','Canola Oil','Almonds','Avocados','Banana','"Barley Grain, Average, At Farm"','"Broccoli, Winter, Lockyer Valley, At Farm"',
+    'Canola Seed (Dryland)','Capsicum','Cereal Hay And Silage','Chickpea(Dryland)','Cotton','Faba Bean','Field Bean','Lentil','Lettuce (Winter)','Lucerne','Lupin Seed','Maize Grain (Dryland)','Maize Grain (Irrigated)','Mung Bean','Oat Grain','Peanut','Potato','Sorghum Grain','Soybean',
+    'Strawberry','Sugarcane','Sunflower','Sweet Corn','Tomato','Triticale','Wheat Grain','Lamb - Unprepared/Unprocessed','Cacao','Coffee - Whole Beans','Mangos','Grains/Flour','Chicken - Unprepared/Unprocessed','In Shell Table Eggs','Fish - Unprepared/Unprocessed','Beer','Cheese (Perishable)',
+    'Gooseberries','Lemons','Limes','Raspberries','Satsuma Mandarins','Strawberries','Tomatoes','Alfalfa','Apples','Aquatic Plants Unprepared/ Unprocessed','Blackberries','Blueberries','Bread (Perishable)','Broad Beans','Carrots','Cherries','Chickpeas','Chicory Leaves','Cucurbits - Edible Peel',
+    'Cucurbits - Inedible Peel','Duck - Unprepared/Unprocessed','Eggs Products/Substitutes','French/ Wax Beans','Graminoids (Grasses)','Head Lettuce','Leek','Leeks','Melons','Mutton - Unprepared/ Unprocessed','Nuts/Seeds - Unprepared/Unprocessed (Perishable)','Oils Edible','Onions','Other Feed Crops',
+    'Pears','Peas','Pork - Prepared/Processed','Pork - Unprepared/ Unprocessed','Potatoes','Rabbit - Unprepared/Unprocessed','Rapeseeds','Rosa - Cut Flowers','Shellfish Unprepared/Unprocessed','Soybeans','Stone Fruit','Sugar Beets','Table Grapes','Turkey - Unprepared/ Unprocessed','Wine - Sparkling',
+    'Wine - Still','Wine Grapes','Bananas','Berries/Small Fruit','Brassica Vegetables','Cassava','Chocolate And Chocolate/Sugar Candy Combinations - Confectionery','Citrus','Coffee - Ground Beans','Edible Legume Crops','Fruits - Unprepared/Unprocessed (Fresh)','Milk Substitutes (Perishable)',
+    'Sugars/Sugar Substitute Products','Vegetable Based Products / Meals','Vegetables - Unprepared/Unprocessed (Shelf Stable)','Vegetables (Non Leaf) - Unprepared/Unprocessed (Fresh)','Crops For Production Of Edible Fruit From Palmtrees','Clementines','Alternative Meat/Poultry/Other Animal Species - Unprepared/Unprocessed',
+    'Apricots','Aquatic Invertebrates - Unprepared/Unprocessed','Artichokeplants','Asparagus','Baking/Cooking Supplies (Shelf Stable)','Beans (With Pods)','Beetroot','Biscuits/Cookies (Perishable)','Bison/Buffalo - Unprepared/Unprocessed','Black Eyed Peas','Broccoli','Butter (Perishable)','Celery',
+    'Cereal Products - Ready To Eat (Perishable)','Chicken - Prepared/Processed','Chutneys/Relishes (Perishable)','Common Cultivated Mushroom (Agaricus)','Courgettes','Cream (Perishable)','Cucumbers','Dates','Dessert Sauces/Toppings/Fillings (Shelf Stable)','Dressings/Dips (Perishable)','Drinks Flavoured - Ready To Drink',
+    'Fennel (Subspecies Azoricum)','Figs','Fish - Prepared/Processed (Frozen)','Fruit Juice - Ready To Drink (Perishable)','Garlic','Ginger','Globe Artichokes','Guavas','Ice Cream/Ice Novelties (Frozen)','Kiwifruits','Lentils','Margarine (Perishable)','Meat Substitutes - Non Animal Based (Perishable)','Olives (Perishable)',
+    'Oranges','Other Sauces Dipping/Condiments/Savoury Toppings/Savoury Spreads/Marinades (Perishable)','Peppers','Pineapples','Pumpkins/Winter Squash','Quinces','Sauces - Cooking (Perishable)','Sauces - Cooking (Shelf Stable)','Spinach (Fresh)','Swedish Turnips (Rutabagas)','Tomato Ketchup/Ketchup Substitutes (Perishable)',
+    'Turkey - Unprepared/Unprocessed','Vegetables - Prepared/Processed (Perishable)','Watermelons','Yogurt (Perishable)','Yogurt Substitutes (Perishable)','Organic Rice','Black Tea','Organic Scallions','Patatoes','Brussel Sprouts','Sweetcorn']
+
+    for(var i = 0; i < foodoptions.length; i++) {
+        var opt = foodoptions[i];
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        selectcrop.appendChild(el);
+    }
+
+</script>
+
+</html>
