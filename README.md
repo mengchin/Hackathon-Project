@@ -1,4 +1,4 @@
-This project was developed and submitted to the International Track of the Presidential Hackathon 2024, hosted by the Ministry of Digital Affairs in Taiwan.
+This project was developed and submitted to the **International Track of the Presidential Hackathon 2024**, hosted by the Ministry of Digital Affairs in Taiwan.
 
 A team comprising Dr. Huw Whitworth (from Cranfield University) and several PhD students from the Open University collaborated to co-create solutions for smart agriculture, aligning with this year’s theme, "Digital and Green."
 
